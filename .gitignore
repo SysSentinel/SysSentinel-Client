@@ -3,6 +3,8 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 .kotlin
+src/main/java/com/bolota/SysSentinelClient/Security/jwtToken.config
+src/main/java/com/bolota/SysSentinelClient/Security/RegisterToken.config
 
 ### IntelliJ IDEA ###
 .idea/modules.xml

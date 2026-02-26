@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 @EqualsAndHashCode
-public class ProcessEntity {
+public class SystemProcessEntity {
     private String  name;
     private int     pid;
     private double  residentMem; // em MBs

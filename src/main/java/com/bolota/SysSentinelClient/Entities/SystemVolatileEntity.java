@@ -8,28 +8,25 @@ import java.util.HashMap;
 
 @Getter
 @Setter
-public class SystemVolatileInfoEntity {
-
-
-
+public class SystemVolatileEntity {
+    private String UUID;
     private HashMap<String, Double> internetCurrentUsage;
     private HashMap<String, String> internetAdapters;
-    private ArrayList<ProcessEntity> processes;
-    public SystemVolatileInfoEntity(SystemEntity se){
+    private ArrayList<SystemProcessEntity> systemProcessEntities;
+    public SystemVolatileEntity(SystemEntity se){
         try {
             this.internetAdapters = se.getInternetAdapters();
-            this.processes = se.getProcesses();
+            this.systemProcessEntities = se.getProcesses();
             this.internetCurrentUsage = se.getInternetCurrentUsage();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
-
     public void updateVolatileInfo(SystemEntity se){
         try{
             this.internetCurrentUsage = se.getInternetCurrentUsage();
             this.internetAdapters = se.getInternetAdapters();
-            this.processes = se.getProcesses();
+            this.systemProcessEntities = se.getProcesses();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }

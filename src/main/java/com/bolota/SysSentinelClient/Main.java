@@ -1,17 +1,27 @@
-package com.bolota;
+package com.bolota.SysSentinelClient;
+import java.io.*;
+import com.bolota.SysSentinelClient.Entities.SystemEntity;
+import static com.bolota.SysSentinelClient.Controller.SysSentinelClientController.*;
+import static com.bolota.SysSentinelClient.Security.SysSentinelClientSecurity.*;
+import static com.bolota.SysSentinelClient.Service.SysSentinelClientService.*;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
-    public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
-
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
+    static public boolean debug = false;
+    public static void main(String[] args) throws IOException{
+        if(!debug){
+            File cache = new File("sysSentinel.config");
+            String urlAndPort = "192.168.0.12:8080";
+            String fileString = "";
+            assertAuthToken();
+            if (!cache.createNewFile()) {
+                fileExists(cache);
+            } else {
+                fileNotExists(cache);
+            }
+            runClient(urlAndPort);
+        }
+        else {
+            System.out.println(getUUID());
         }
     }
 }

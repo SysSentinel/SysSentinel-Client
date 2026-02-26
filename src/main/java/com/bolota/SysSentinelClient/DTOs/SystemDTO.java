@@ -1,9 +1,9 @@
-package com.bolota.SysSentinelClient;
+package com.bolota.SysSentinelClient.DTOs;
 
+import com.bolota.SysSentinelClient.Entities.SystemEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -12,6 +12,7 @@ import java.util.List;
 @EqualsAndHashCode
 
 public class SystemDTO {
+    private String UUID;
     private String name;
     private String os;
     private String host;

@@ -1,4 +1,4 @@
-package com.bolota.SysSentinelClient;
+package com.bolota.SysSentinelClient.Entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
@@ -9,7 +9,6 @@ import lombok.ToString;
 import oshi.SystemInfo;
 import oshi.hardware.NetworkIF;
 import oshi.software.os.OSProcess;
-
 import java.util.*;
 
 import static java.lang.Thread.sleep;
@@ -18,13 +17,14 @@ import static java.lang.Thread.sleep;
 @Getter
 @Setter
 public class SystemEntity {
+    private String UUID;
     private String name;
     private String os;
     private String host;
     private String cpu;
 
     @ToString.Exclude
-    private ArrayList<ProcessEntity> processes;
+    private ArrayList<SystemProcessEntity> processes;
 
     private List<String> gpu;
     private double memRamMax;
@@ -52,9 +52,6 @@ public class SystemEntity {
     private HashMap<Integer, OSProcess> oldProcesses;
 
     @ToString.Exclude
-    private String macAdress;
-
-    @ToString.Exclude
     @JsonIgnore
     @Getter(AccessLevel.NONE)
     private final SystemInfo si;
@@ -64,9 +61,10 @@ public class SystemEntity {
     @Getter(AccessLevel.NONE)
     boolean hasRun = false;
 
+
+
     public SystemEntity() {
         this.si = new SystemInfo();
-        this.macAdress = si.getHardware();
         this.name = si.getOperatingSystem().getNetworkParams().getHostName();
         this.os = si.getOperatingSystem().getFamily();
         this.host = si.getHardware().getComputerSystem().getModel();
@@ -90,12 +88,12 @@ public class SystemEntity {
 
     }
 
-    public List<ProcessEntity> searchProcess(String name) {
+    public List<SystemProcessEntity> searchProcess(String name) {
         return processes.stream().filter(i -> i.getName().toLowerCase().matches(name.toLowerCase())).toList();
     }
 
-    public ProcessEntity searchProcess(int PID) {
-        List<ProcessEntity> tempLst = processes.stream().filter(i -> i.getPid() == PID).limit(1).toList();
+    public SystemProcessEntity searchProcess(int PID) {
+        List<SystemProcessEntity> tempLst = processes.stream().filter(i -> i.getPid() == PID).limit(1).toList();
         if (tempLst.isEmpty()) {
             return null;
         } else {
@@ -104,22 +102,22 @@ public class SystemEntity {
     }
 
     public void updateNetworkInfo() throws InterruptedException {
-        newTotalDownloadUsage = 0;
-        newTotalUploadUsage = 0;
-
-        si.getHardware().getNetworkIFs().stream().map(NetworkIF::getBytesRecv).forEach(i -> newTotalDownloadUsage += i);
-        si.getHardware().getNetworkIFs().stream().map(NetworkIF::getBytesSent).forEach(i -> newTotalUploadUsage += i);
-
-        sleep(1000);
         totalDownloadUsage = 0;
         totalUploadUsage = 0;
 
         si.getHardware().getNetworkIFs().stream().map(NetworkIF::getBytesRecv).forEach(i -> totalDownloadUsage += i);
         si.getHardware().getNetworkIFs().stream().map(NetworkIF::getBytesSent).forEach(i -> totalUploadUsage += i);
 
+        sleep(1000);
+        newTotalDownloadUsage = 0;
+        newTotalUploadUsage = 0;
+
+        si.getHardware().getNetworkIFs().stream().map(NetworkIF::getBytesRecv).forEach(i -> newTotalDownloadUsage += i);
+        si.getHardware().getNetworkIFs().stream().map(NetworkIF::getBytesSent).forEach(i -> newTotalUploadUsage += i);
+
         internetCurrentUsage.clear();
-        internetCurrentUsage.put("Download",totalDownloadUsage - newTotalDownloadUsage);
-        internetCurrentUsage.put("Upload",totalUploadUsage - newTotalUploadUsage);
+        internetCurrentUsage.put("Download",newTotalDownloadUsage - totalDownloadUsage);
+        internetCurrentUsage.put("Upload",newTotalUploadUsage - totalUploadUsage);
     }
 
     public void updateProcesses() throws InterruptedException {
@@ -127,7 +125,7 @@ public class SystemEntity {
         double cpuNormalization = 100.0/(si.getHardware().getProcessor().getLogicalProcessorCount());
         si.getOperatingSystem().getProcesses().forEach(i -> this.oldProcesses.put(i.getProcessID(), i));
         sleep(1000);
-        si.getOperatingSystem().getProcesses().forEach(i-> this.processes.add(new ProcessEntity(i.getName(),i.getProcessID(),i.getResidentSetSize()/(1024*1024.0),i.getVirtualSize()/(1024*1024*1024.0),i.getProcessCpuLoadBetweenTicks(oldProcesses.get(i.getProcessID()))*cpuNormalization)));
+        si.getOperatingSystem().getProcesses().forEach(i-> this.processes.add(new SystemProcessEntity(i.getName(),i.getProcessID(),i.getResidentSetSize()/(1024*1024.0),i.getVirtualSize()/(1024*1024*1024.0),i.getProcessCpuLoadBetweenTicks(oldProcesses.get(i.getProcessID()))*cpuNormalization)));
     }
     public void updateNetworkAdaptersAndIp(){
         internetAdapters.clear();
@@ -169,9 +167,8 @@ public class SystemEntity {
             throw new RuntimeException(e);
         }
     }
-    public ArrayList<ProcessEntity> getProcesses() throws InterruptedException {
+    public ArrayList<SystemProcessEntity> getProcesses() throws InterruptedException {
         updateProcesses();
         return this.processes;
     }
-
 }
