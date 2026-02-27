@@ -1,4 +1,4 @@
-package com.bolota.SysSentinelClient.DTOs;
+package com.bolota.SysSentinelClient.Entities.DTOs;
 
 import com.bolota.SysSentinelClient.Entities.SystemEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;

@@ -18,7 +18,8 @@ public class SystemVolatileEntity {
             this.internetAdapters = se.getInternetAdapters();
             this.systemProcessEntities = se.getProcesses();
             this.internetCurrentUsage = se.getInternetCurrentUsage();
-        } catch (InterruptedException e) {
+        }
+        catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
@@ -27,7 +28,8 @@ public class SystemVolatileEntity {
             this.internetCurrentUsage = se.getInternetCurrentUsage();
             this.internetAdapters = se.getInternetAdapters();
             this.systemProcessEntities = se.getProcesses();
-        } catch (InterruptedException e) {
+        }
+        catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
