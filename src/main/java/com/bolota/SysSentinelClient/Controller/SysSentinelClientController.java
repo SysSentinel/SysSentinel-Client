@@ -21,8 +21,6 @@ public class SysSentinelClientController {
 
     private static void requestNewJWTToken(String urlAndPort, OkHttpClient client) throws IOException {
         Request request = new Request.Builder().url(urlAndPort + sysEndPoint +"updateAuth").header("JwtToken","null").header("RegisterToken",getAuthToken()).header("sysUUID",getUUID()).get().build();
-        System.out.println(request.httpUrl().url());
-        System.out.println(request.headers().toMultimap());
         Response responseBody = client.newCall(request).execute();
         String rsp = responseBody.body().string();
         System.out.println(rsp);
@@ -49,7 +47,7 @@ public class SysSentinelClientController {
                 writeUUID(getUUIDfromString(rsp));
                 responseBody.body().close();
                 if (responseBody.code() == 200) {
-                    System.out.println("[" + new Date().toString() + "]" + " 'Greetings' request sent, successfully!\n\nInitializing volatile data transmission...");
+                    System.out.println("[" + new Date() + "]" + " \"Requisição de saudação\" enviada com sucesso!\n\nIniciando transmissão de Dados Voláteis...");
                     if(condUUIDNull){
                         UUID = getUUIDfromString(rsp);
                         writeUUID(UUID);
@@ -57,11 +55,11 @@ public class SysSentinelClientController {
                     notSentCond = false;
                 }
                 else {
-                    System.out.println("[" + new Date() + "]" + " Failed to send the request to: " + urlAndPort + sysEndPoint + "sysinfo, " + "code: " + responseBody.code() + " | retrying in 10 seconds...");
+                    System.out.println("[" + new Date() + "]" + " Falha ao enviar a requisição para: " + urlAndPort + sysEndPoint + "sysinfo, " + "Código: " + responseBody.code() + " | Tentando novamente em 10 segundos...");
                 }
             }
             catch (Exception e) {
-                System.out.println("[" + new Date() + "] " + e + " | Retrying in 10 seconds... (No Auth)");
+                System.out.println("[" + new Date() + "] " + e + " | Tentando novamente em 10 segundos...");
             }
         }
     }
@@ -81,18 +79,20 @@ public class SysSentinelClientController {
                 Request request = new Request.Builder().url(urlAndPort + sysEndPoint + "sysinfo").header("JwtToken",getJwtToken()).header("RegisterToken","null").post(body).build();
                 Response responseBody = client.newCall(request).execute();
                 if (responseBody.code() == 200) {
-                    System.out.println("[" + new Date().toString() + "]" + " 'Greetings' request sent, successfully!\n\nInitializing volatile data transmission...");
+                    System.out.println("[" + new Date() + "]" + " \"Requisição de saudação\" enviada com sucesso!\n"+"[" + new Date() + "]" +" Iniciando transmissão de Dados Voláteis...");
                     notSentCond = false;
                 }
                 else if (responseBody.code() == 401){
+                    System.out.println("[" + new Date() + "]" + " Falha na autenticação...\n "+ "[" + new Date() + "]"+" Requisitando nova credencial ao servidor...");
                     requestNewJWTToken(urlAndPort,client);
+                    System.out.println("[" + new Date() + "]" + " Tentando reenvio da \"Requisição de saudação\" em 10 segundos...");
                 }
                 else {
-                    System.out.println("[" + new Date() + "]" + " Failed to send the request to: " + urlAndPort + sysEndPoint +"sysinfo, " + "code: " + responseBody.code() + " | retrying in 10 seconds...");
+                    System.out.println("[" + new Date() + "]" + " Falha ao enviar a requisição para: " + urlAndPort + sysEndPoint + "sysinfo, " + "Código: " + responseBody.code() + " | Tentando novamente em 10 segundos...");
                 }
             }
             catch (Exception e) {
-                System.out.println("[" + new Date() + "] " + e + " | Retrying in 10 seconds... (Auth)");
+                System.out.println("[" + new Date() + "] " + e + " | Tentando novamente em 10 segundos...");
             }
 
         }
@@ -115,7 +115,7 @@ public class SysSentinelClientController {
             Response responseBody = client.newCall(request).execute();
             rsp = responseBody.body().string();
             if (responseBody.code() == 200) {
-                System.out.println("[" + new Date() +"]" + " 'Volatile System Info' sent, successfully! In 10 seconds, sending another one...");
+                System.out.println("[" + new Date() +"]" + " \"Dados Volateis\" enviados com sucesso! Enviando outro em 10 segundos ...");
             }
             else if (responseBody.code() == 401){
                 requestNewJWTToken(urlAndPort,client);
@@ -124,11 +124,11 @@ public class SysSentinelClientController {
                 sendSystemDTO(urlAndPort, sysDTO, client);
             }
             else {
-                System.out.println("[" + new Date() +"]" + " Failed to send the request to: " + urlAndPort + sysEndPoint +"sysinfovolatile, " + "code: " + responseBody.code() + " | retrying in 10 seconds...");
+                System.out.println("[" + new Date() + "]" + " Falha ao enviar a requisição para: " + urlAndPort + sysEndPoint + "sysinfovolatile, " + "Código: " + responseBody.code() + " | Tentando novamente em 10 segundos...");
             }
         }
         catch(Exception e){
-            System.out.println("[" + new Date() +"] " + e + " | retrying in 10 seconds...");
+            System.out.println("[" + new Date() +"] " + e + " | Tentando novamente em 10 segundos..");
         }
     }
     public static void runClient(String urlAndPort) throws IOException {

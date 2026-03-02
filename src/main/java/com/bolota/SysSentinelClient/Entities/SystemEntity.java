@@ -6,13 +6,16 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import lombok.extern.slf4j.Slf4j;
 import oshi.SystemInfo;
 import oshi.hardware.NetworkIF;
 import oshi.software.os.OSProcess;
+
 import java.util.*;
 
 import static java.lang.Thread.sleep;
 
+@Slf4j
 @ToString
 @Getter
 @Setter
@@ -49,6 +52,9 @@ public class SystemEntity {
     private HashMap<String, String> internetAdapters;
 
     @ToString.Exclude
+    private HashMap<String, String> basicComputerInfo;
+
+    @ToString.Exclude
     private HashMap<Integer, OSProcess> oldProcesses;
 
     @ToString.Exclude
@@ -73,10 +79,12 @@ public class SystemEntity {
         this.oldProcesses = new HashMap<>();
         this.internetAdapters = new HashMap<>();
         this.internetCurrentUsage = new HashMap<>();
+        this.basicComputerInfo = new HashMap<>();
         updateNetworkAdaptersAndIp();
         this.totalDownloadUsage = 0;
         this.totalUploadUsage = 0;
         try {
+            updateBasicComputerInfo();
             updateNetworkInfo();
             updateProcesses();
             hasRun = true;
@@ -98,7 +106,18 @@ public class SystemEntity {
             return tempLst.get(0);
         }
     }
-
+    public void updateBasicComputerInfo(){
+        basicComputerInfo.clear();
+        basicComputerInfo.put("Temperatura da CPU",si.getHardware().getSensors().getCpuTemperature() + " Cº");
+        long totalSeconds = si.getOperatingSystem().getSystemUptime();
+        long hours = totalSeconds / 3600;
+        long minutes = (totalSeconds % 3600) / 60;
+        long seconds = totalSeconds % 60;
+        String time = String.format("%d hrs %02d mins %02d secs", hours, minutes, seconds);
+        basicComputerInfo.put("Tempo de atividade",time);
+        basicComputerInfo.put("Total de processos ativos",""+si.getOperatingSystem().getProcessCount());
+        basicComputerInfo.put("Memoria RAM utilizada",String.format("%.2f",(si.getHardware().getMemory().getTotal() - si.getHardware().getMemory().getAvailable())/Math.pow(1024,3)) + " GBs");
+    }
     public void updateNetworkInfo() throws InterruptedException {
         totalDownloadUsage = 0;
         totalUploadUsage = 0;
@@ -168,5 +187,10 @@ public class SystemEntity {
     public ArrayList<SystemProcessEntity> getProcesses() throws InterruptedException {
         updateProcesses();
         return this.processes;
+    }
+
+    public HashMap<String,String> getBasicComputerInfo() throws InterruptedException {
+        updateBasicComputerInfo();
+        return this.basicComputerInfo;
     }
 }

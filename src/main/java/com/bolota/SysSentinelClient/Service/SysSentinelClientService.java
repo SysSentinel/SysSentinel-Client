@@ -45,20 +45,18 @@ public class SysSentinelClientService {
             String urlAndPort = fileString.substring(fileString.indexOf("=") + 1);
             String rawUUID = scanner.nextLine();
             UUID = rawUUID.substring(rawUUID.indexOf("=") + 1);
-            System.out.println("[" + new Date() + "] " + "An used URL already exists in the cache, do you want to re-use it? [" + urlAndPort + "] Y/n (Default: Y)");
+            System.out.println("[" + new Date() + "] " + "Uma URL ja existe no cache, deseja re-utilizar la? [" + urlAndPort + "] Y/n (Padrão: Y)");
             String anwser;
             Scanner scanner1 = new Scanner(System.in);
             anwser = scanner1.nextLine();
             if (!anwser.isBlank()) {
                 if (anwser.charAt(0) == 'n' || anwser.charAt(0) == 'N') {
-                    System.out.println("[" + new Date() + "]" + " Enter URL and Port (E.g: 198.168.0.12:8080): ");
-                    urlAndPort = scanner1.nextLine();
-                    try (FileWriter fw = new FileWriter(cache)) {
-                        fw.write("url=" + urlAndPort);
-                        fw.write("\nuuid=" + UUID);
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
+                    String uuidTemp = "";
+                    if(!isUUIDNull()){
+                        uuidTemp = getUUID();
                     }
+                    fileNotExists(cache);
+                    if (!uuidTemp.isBlank()) writeUUID(uuidTemp);
                 }
             }
         } catch (Exception e) {
@@ -67,7 +65,7 @@ public class SysSentinelClientService {
     }
     public static void fileNotExists(File cache) throws IOException {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("[" + new Date() + "]" + " Enter URL and Port (E.g: 198.168.0.12:8080): ");
+        System.out.println("[" + new Date() + "]" + " Digite a URL junto da Porta (Ex: 198.168.0.12:8080): ");
         String urlAndPort = scanner.nextLine();
         cache.delete();
         cache.createNewFile();

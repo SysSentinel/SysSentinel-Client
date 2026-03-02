@@ -3,6 +3,7 @@ package com.bolota.SysSentinelClient.Security;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Date;
 import java.util.Scanner;
 
 public class SysSentinelClientSecurity {
@@ -16,7 +17,7 @@ public class SysSentinelClientSecurity {
     public static void generateAuthFile() {
         Scanner scanner = new Scanner(System.in);
         File file = new File(authFilePath);
-        System.out.println("Enter the Register Key:");
+        System.out.println("[" + new Date() + "]" + " Digite a chave de registro (Obs: a chave de registro do cliente deve ser igual a do servidor!):");
         String regKey = scanner.nextLine();
         try (FileWriter fw= new FileWriter(file)){
             fw.write("RegisterKey="+regKey);

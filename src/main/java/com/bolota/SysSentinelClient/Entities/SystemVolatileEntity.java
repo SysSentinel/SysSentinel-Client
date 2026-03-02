@@ -10,11 +10,13 @@ import java.util.HashMap;
 @Setter
 public class SystemVolatileEntity {
     private String UUID;
+    private HashMap<String, String> basicComputerInfo;
     private HashMap<String, Double> internetCurrentUsage;
     private HashMap<String, String> internetAdapters;
     private ArrayList<SystemProcessEntity> systemProcessEntities;
     public SystemVolatileEntity(SystemEntity se){
         try {
+            this.basicComputerInfo = se.getBasicComputerInfo();
             this.internetAdapters = se.getInternetAdapters();
             this.systemProcessEntities = se.getProcesses();
             this.internetCurrentUsage = se.getInternetCurrentUsage();
@@ -25,6 +27,7 @@ public class SystemVolatileEntity {
     }
     public void updateVolatileInfo(SystemEntity se){
         try{
+            this.basicComputerInfo = se.getBasicComputerInfo();
             this.internetCurrentUsage = se.getInternetCurrentUsage();
             this.internetAdapters = se.getInternetAdapters();
             this.systemProcessEntities = se.getProcesses();

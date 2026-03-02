@@ -1,7 +1,10 @@
 package com.bolota.SysSentinelClient;
 import java.io.*;
+import java.math.BigDecimal;
 
 import com.bolota.SysSentinelClient.Entities.SystemEntity;
+import oshi.SystemInfo;
+import oshi.hardware.GlobalMemory;
 
 import static com.bolota.SysSentinelClient.Controller.SysSentinelClientController.*;
 import static com.bolota.SysSentinelClient.Security.SysSentinelClientSecurity.*;
@@ -25,7 +28,15 @@ public class Main {
             runClient(urlAndPort);
         }
         else {
-            System.out.println(getAuthToken());
+            SystemInfo si = new SystemInfo();
+            GlobalMemory memory = si.getHardware().getMemory();
+
+            long total = memory.getTotal();
+            long available = memory.getAvailable();
+
+            long used = total - available;
+            System.out.println(si.getHardware().getNetworkIFs());
+            System.out.println(used/Math.pow(1024,3));
         }
     }
 }
